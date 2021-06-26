@@ -51,7 +51,7 @@ void setup() {
   //-------------------------------------------------------------------------
   //TFT screen
   tft.begin();
-  tft.setRotation(1);
+  tft.setRotation(2);
   tft.fillScreen(BLACK, BLACK);
   //-------------------------------------------------------------------------
 
@@ -67,7 +67,8 @@ void setup() {
   //INA-226
   Wire.begin();
   testINAConnection();
-  ina.begin(0x40);  // Default INA226 address is 0x40
+  //ina.begin(0x40);  // Default INA226 address is 0x40
+  ina.begin(0x50);
   //-------------------------------------------------------------------------
 
   
@@ -94,8 +95,8 @@ void setup() {
     delay(500);
   
     int BMWLogo_x = 64;
-    int BMWLogo_y = 102;
-    int BMWText_y = 1;
+    int BMWLogo_y = 85;
+    int BMWText_y = 5;
     
     drawBMWLogo(BMWLogo_x, BMWLogo_y);
     drawBMWText(BMWText_y, WHITE, BLACK, 60);
@@ -194,7 +195,8 @@ void loop() {
 void testINAConnection(){
   //Test INA connection
   inaConnected = false;
-  Wire.beginTransmission(64); //0x40
+  //Wire.beginTransmission(64); //0x40
+  Wire.beginTransmission(80); //0x40
   byte error = Wire.endTransmission();
   if (error == 0){
     inaConnected = true;
@@ -275,7 +277,10 @@ void drawHumidity(int humidity){
 }
 
 void drawBMWLogo(int x, int y){
-  for (int radius = 0; radius <= 20; radius += 2) {
+
+  int logoRadius = 36;
+  
+  for (int radius = 0; radius <= logoRadius; radius += 2) {
     tft.drawArc(x, y, radius + 5, 5, 0, 360, BLACK);
     tft.drawArc(x, y, radius, radius, 0, 90, WHITE);
     tft.drawArc(x, y, radius, radius, 90, 180, WHITE);
@@ -286,26 +291,29 @@ void drawBMWLogo(int x, int y){
 
   tft.drawPixel(x, y, 0x351A);
   
-  for (int w = 0; w <= 20; w += 1) {
+  for (int w = 0; w <= logoRadius; w += 1) {
     tft.drawLine(x - w, y, x + w, y, 0x351A);
     delay(20);
   }
 
   for (int angle = 0; angle <= 90; angle += 2) {
-    tft.drawArc(x, y, 20, 20, 90, 90 + angle, 0x351A);
-    tft.drawArc(x, y, 20, 20, 270, 270 + angle, 0x351A);
+    tft.drawArc(x, y, logoRadius, logoRadius, 90, 90 + angle, 0x351A);
+    tft.drawArc(x, y, logoRadius, logoRadius, 270, 270 + angle, 0x351A);
   }
 }
 
 void removeBMWLogo(int x, int y){
-  for (int w = 0; w <= 25; w += 1) {
+  int logoRadius = 36;
+  logoRadius += 5;
+  
+  for (int w = 0; w <= logoRadius; w += 1) {
     tft.drawLine(x - w, y, x + w, y, WHITE);
     delay(2);
   }
 
-  for (int angle = 0; angle <= 180; angle += 20) {
-    tft.drawArc(x, y, 25, 25, 90, 90 + angle, WHITE);
-    tft.drawArc(x, y, 25, 25, 270, 270 + angle, WHITE);
+  for (int angle = 0; angle <= 180; angle += 10) {
+    tft.drawArc(x, y, logoRadius, logoRadius, 90, 90 + angle, WHITE);
+    tft.drawArc(x, y, logoRadius, logoRadius, 270, 270 + angle, WHITE);
   }
 }
 
